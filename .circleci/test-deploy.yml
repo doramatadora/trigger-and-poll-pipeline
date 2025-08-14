@@ -37,12 +37,25 @@ workflows:
       # Test your orb's commands in a custom job and test your orb's jobs directly as a part of this workflow.
       - trigger-and-poll-pipeline/trigger:
           filters: *filters
-          name: Trigger with no params
+          name: Trigger and forget
           project_slug: github/doramatadora/trigger-and-poll-pipeline
           branch: test
           token: $CIRCLE_TOKEN
           definition_id: $PIPELINE_DEFINITION_ID
           workflow_name: test-branch-echo
+          context:
+          - trigger-and-poll-pipeline-orb
+          - orb-developer
+      - trigger-and-poll-pipeline/trigger:
+          filters: *filters
+          name: Trigger and poll
+          project_slug: github/doramatadora/trigger-and-poll-pipeline
+          branch: test
+          token: $CIRCLE_TOKEN
+          definition_id: $PIPELINE_DEFINITION_ID
+          workflow_name: test-branch-echo
+          job_name: run-echo
+          poll_interval: 5
           context:
           - trigger-and-poll-pipeline-orb
           - orb-developer
@@ -56,7 +69,8 @@ workflows:
           # Ensure this job requires all test jobs and the pack job.
           requires:
             - orb-tools/pack
-            - Trigger with no params
+            - Trigger and forget
+            - Trigger and poll
           context: orb-publishing
           filters: *release-filters
 
