@@ -84,7 +84,21 @@ echo "Triggering from $ref_type $ref_value"
 
 if [ -n "$PARAMETERS" ]; then
     PARAMS=$(jq -Rn --arg params "$PARAMETERS" '
-        ($params | split(",") | map(split("=") | { (.[0]): .[1] }) | add)
+        (
+            $params 
+            | split(",") 
+            | map(
+                split("=") 
+                | { (.[0]): 
+                    if .[1] == "true" then true
+                    elif .[1] == "false" then false
+                    elif (. [1] | test("^-?[0-9]+$")) then (. [1] | tonumber)
+                    else .[1]
+                    end
+                    }
+                )
+            | add
+        )
     ')
 
     echo "With parameters $PARAMS"

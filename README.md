@@ -1,6 +1,6 @@
 # Trigger CircleCI Pipeline Orb and Optionally Poll for Success
 
-`doramatadora/trigger-and-poll-pipeline@1.0.0`
+`doramatadora/trigger-and-poll-pipeline@1.0.1`
 
 This orb allows you to trigger a CircleCI pipeline and optionally poll for its success. You can trigger pipelines from a branch or tag, and poll for workflows or individual jobs within a workflow.
 
@@ -11,7 +11,7 @@ This orb allows you to trigger a CircleCI pipeline and optionally poll for its s
 ```yaml
 version: 2.1
 orbs:
-  trigger-and-poll-pipeline: doramatadora/trigger-and-poll-pipeline@1.0.0
+  trigger-and-poll-pipeline: doramatadora/trigger-and-poll-pipeline@1.0.1
 
 workflows:
   trigger-and-poll-pipeline-workflow:
