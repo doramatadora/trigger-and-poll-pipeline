@@ -44,6 +44,6 @@ workflows:
           # Ensure this job requires all test jobs and the pack job.
           requires:
             - orb-tools/pack
-            - command-test
+            - Trigger with no params
           context: orb-publishing
           filters: *release-filters
