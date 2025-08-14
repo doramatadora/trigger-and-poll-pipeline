@@ -1,0 +1,19 @@
+description: >
+  Triggers a pipeline and waits for a specific job within a workflow.
+usage:
+  version: 2.1
+  orbs:
+    trigger-and-poll-pipeline: doramatadora/trigger-and-poll-pipeline@1.0.0
+  workflows:
+    trigger-job:
+      jobs:
+        - trigger-and-poll-pipeline/trigger:
+            project_slug: github/doramatadora/trigger-and-poll-pipeline
+            branch: release
+            definition_id: $DEFINITION_ID
+            token: $CIRCLECI_PAT
+            parameters: env=production,debug=true
+            poll_interval: 15
+            poll_timeout: 900
+            workflow_name: deploy
+            job_name: deploy-backend

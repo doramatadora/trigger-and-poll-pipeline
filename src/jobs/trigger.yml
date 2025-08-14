@@ -1,0 +1,58 @@
+description: >
+  This job triggers a CircleCI pipeline.
+  For more information about the parameters go to https://github.com/doramatadora/trigger-and-poll-pipeline
+
+docker:
+  - image: cimg/base:stable
+
+parameters:
+  token:
+    type: string
+    description: Name of the environment variable for the PAT token to use for authentication.
+  project_slug:
+    type: string
+    description: The project slug. This can be found on the CircleCI project settings page.
+  definition_id:
+    type: string
+    description: Definition id of the pipeline to run. This can be found on the CircleCI project settings page.
+  branch:
+    type: string
+    default: ""
+    description: Branch where the pipeline will be run from. Not compatible with tag.
+  tag:
+    type: string
+    default: ""
+    description: Tag where the pipeline will be run from. Not compatible with branch.
+  parameters:
+    type: string
+    description: List of comma separated key=value parameters.
+    default: ""
+  poll_interval:
+    type: integer
+    default: 0
+    description: Number of seconds between polling the pipeline for completion. Defaults to 0 (fire and forget).
+  poll_timeout:
+    type: integer
+    default: 0
+    description: Timeout in seconds for polling. Defaults to 0 (no timeout).
+  workflow_name:
+    type: string
+    default: ""
+    description: Optional workflow name to poll for success within the triggered pipeline. Required if job_name is specified.
+  job_name:
+    type: string
+    default: ""
+    description: Optional job name to poll for success within workflow_name.
+
+steps:
+  - trigger:
+      project_slug: <<parameters.project_slug>>
+      branch: <<parameters.branch>>
+      tag: <<parameters.tag>>
+      definition_id: <<parameters.definition_id>>
+      parameters: <<parameters.parameters>>
+      token: <<parameters.token>>
+      poll_interval: <<parameters.poll_interval>>
+      poll_timeout: <<parameters.poll_timeout>>
+      workflow_name: <<parameters.workflow_name>>
+      job_name: <<parameters.job_name>>

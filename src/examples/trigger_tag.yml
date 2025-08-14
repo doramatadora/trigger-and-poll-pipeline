@@ -1,0 +1,15 @@
+description: >
+  Triggers a CircleCI pipeline from a specific tag.
+usage:
+  version: 2.1
+  orbs:
+    trigger-and-poll-pipeline: doramatadora/trigger-and-poll-pipeline@1.0.0
+  workflows:
+    trigger-tag:
+      jobs:
+        - trigger-and-poll-pipeline/trigger:
+            project_slug: github/doramatadora/trigger-and-poll-pipeline
+            tag: v1.2.3
+            definition_id: $DEFINITION_ID
+            token: $CIRCLECI_PAT
+            parameters: color=blue,size=large

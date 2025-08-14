@@ -1,62 +1,106 @@
-# Orb Template
+# Trigger CircleCI Pipeline Orb and Optionally Poll for Success
 
+`doramatadora/trigger-and-poll-pipeline@1.0.0`
 
-[![CircleCI Build Status](https://circleci.com/gh/doramatadora/trigger-and-poll-pipeline.svg?style=shield "CircleCI Build Status")](https://circleci.com/gh/doramatadora/trigger-and-poll-pipeline) [![CircleCI Orb Version](https://badges.circleci.com/orbs/doramatadora/trigger-and-poll-pipeline.svg)](https://circleci.com/developer/orbs/orb/doramatadora/trigger-and-poll-pipeline) [![GitHub License](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://raw.githubusercontent.com/doramatadora/trigger-and-poll-pipeline/master/LICENSE) [![CircleCI Community](https://img.shields.io/badge/community-CircleCI%20Discuss-343434.svg)](https://discuss.circleci.com/c/ecosystem/orbs)
+This orb allows you to trigger a CircleCI pipeline and optionally poll for its success. You can trigger pipelines from a branch or tag, and poll for workflows or individual jobs within a workflow.
 
+## Usage
 
-
-A project template for Orbs.
-
-This repository is designed to be automatically ingested and modified by the CircleCI CLI's `orb init` command.
-
-_**Edit this area to include a custom title and description.**_
-
----
-
-## Resources
-
-[CircleCI Orb Registry Page](https://circleci.com/developer/orbs/orb/doramatadora/trigger-and-poll-pipeline) - The official registry page of this orb for all versions, executors, commands, and jobs described.
-
-[CircleCI Orb Docs](https://circleci.com/docs/orb-intro/#section=configuration) - Docs for using, creating, and publishing CircleCI Orbs.
-
-### How to Contribute
-
-We welcome [issues](https://github.com/doramatadora/trigger-and-poll-pipeline/issues) to and [pull requests](https://github.com/doramatadora/trigger-and-poll-pipeline/pulls) against this repository!
-
-### How to Publish An Update
-1. Merge pull requests with desired changes to the main branch.
-    - For the best experience, squash-and-merge and use [Conventional Commit Messages](https://conventionalcommits.org/).
-2. Find the current version of the orb.
-    - You can run `circleci orb info doramatadora/trigger-and-poll-pipeline | grep "Latest"` to see the current version.
-3. Create a [new Release](https://github.com/doramatadora/trigger-and-poll-pipeline/releases/new) on GitHub.
-    - Click "Choose a tag" and _create_ a new [semantically versioned](http://semver.org/) tag. (ex: v1.0.0)
-      - We will have an opportunity to change this before we publish if needed after the next step.
-4.  Click _"+ Auto-generate release notes"_.
-    - This will create a summary of all of the merged pull requests since the previous release.
-    - If you have used _[Conventional Commit Messages](https://conventionalcommits.org/)_ it will be easy to determine what types of changes were made, allowing you to ensure the correct version tag is being published.
-5. Now ensure the version tag selected is semantically accurate based on the changes included.
-6. Click _"Publish Release"_.
-    - This will push a new tag and trigger your publishing pipeline on CircleCI.
-
-### Development Orbs
-
-Prerequisites:
-
-- An initial sevmer deployment must be performed in order for Development orbs to be published and seen in the [Orb Registry](https://circleci.com/developer/orbs).
-
-A [Development orb](https://circleci.com/docs/orb-concepts/#development-orbs) can be created to help with rapid development or testing. To create a Development orb, change the `orb-tools/publish` job in `test-deploy.yml` to be the following:
+### Trigger a pipeline
 
 ```yaml
-- orb-tools/publish:
-    orb_name: doramatadora/trigger-and-poll-pipeline
-    vcs_type: << pipeline.project.type >>
-    pub_type: dev
-    # Ensure this job requires all test jobs and the pack job.
-    requires:
-      - orb-tools/pack
-      - command-test
-    context: orb-publishing
-    filters: *filters
+version: 2.1
+orbs:
+  trigger-and-poll-pipeline: doramatadora/trigger-and-poll-pipeline@1.0.0
+
+workflows:
+  trigger-and-poll-pipeline-workflow:
+    jobs:
+      - trigger-and-poll-pipeline/trigger:
+          project_slug: github/doramatadora/trigger-and-poll-pipeline
+          branch: main
+          definition_id: $DEFINITION_ID
+          token: $CIRCLECI_PAT
+          parameters: color=red,size=medium
+          poll_interval: 10
+          poll_timeout: 300
 ```
 
-The job output will contain a link to the Development orb Registry page. The parameters `enable_pr_comment` and `github_token` can be set to add the relevant publishing information onto a pull request. Please refer to the [orb-tools/publish](https://circleci.com/developer/orbs/orb/circleci/orb-tools#jobs-publish) documentation for more information and options.
+### Parameters
+
+| Parameter              | Type    | Default | Description                                                                        |
+| ---------------------- | ------- | ------- | ---------------------------------------------------------------------------------- |
+| `token`                | string  | -       | CircleCI PAT.                                                                      |
+| `project_slug`         | string  | -       | The project slug. Example: `github/org/repo`.                                      |
+| `definition_id`        | string  | -       | Definition ID of the pipeline to run.                                              |
+| `branch`               | string  | `main`  | Branch to trigger the pipeline from. Not compatible with `tag`.                    |
+| `tag`                  | string  | `""`    | Tag to trigger the pipeline from. Not compatible with `branch`.                    |
+| `parameters`           | string  | `""`    | Comma-separated key=value pairs to pass as pipeline parameters.                    |
+| `workflow_name`        | string  | `""`    | Optional workflow name to poll for success. Required if `job_name` is set.         |
+| `job_name`             | string  | `""`    | Optional job name to poll for success inside `workflow_name`.                      |
+| `poll_interval`        | integer | `0`     | Seconds between polling attempts. `0` disables polling.                            |
+| `poll_timeout`         | integer | `0`     | Maximum number of seconds to poll. `0` means no timeout.                           |
+
+
+## Examples
+
+### Trigger from a branch
+
+```yaml
+jobs:
+  - trigger-and-poll-pipeline/trigger:
+      project_slug: github/doramatadora/trigger-and-poll-pipeline
+      branch: main
+      definition_id: $DEFINITION_ID
+      token: $CIRCLECI_PAT
+      parameters: color=red,size=medium
+```
+
+### Trigger from a tag
+
+```yaml
+jobs:
+  - trigger-and-poll-pipeline/trigger:
+      project_slug: github/doramatadora/trigger-and-poll-pipeline
+      tag: v1.2.3
+      definition_id: $DEFINITION_ID
+      token: $CIRCLECI_PAT
+      parameters: color=blue,size=large
+```
+
+### Poll for a specific workflow
+
+```yaml
+jobs:
+  - trigger-and-poll-pipeline/trigger:
+      project_slug: github/org/another-repo
+      branch: develop
+      definition_id: $DEFINITION_ID
+      token: $CIRCLECI_PAT
+      workflow_name: build-and-test
+      poll_interval: 10
+      poll_timeout: 1200
+```
+
+### Poll for a specific job in a workflow
+
+```yaml
+jobs:
+  - trigger-and-poll-pipeline/trigger:
+      project_slug: github/org/another-repo
+      branch: develop
+      definition_id: $DEFINITION_ID
+      token: $CIRCLECI_PAT
+      workflow_name: build-and-test
+      job_name: test
+      poll_interval: 10
+```
+
+## Requirements
+
+* [jq](https://jqlang.org) must be available in the CircleCI environment.
+* A CircleCI Personal Access Token (PAT) with permission to trigger pipelines.
+
+## License
+
+MIT

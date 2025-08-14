@@ -1,0 +1,62 @@
+description: >
+  This command triggers a CircleCI pipeline.
+  It can be used to trigger a pipeline and wait for it to finish.
+  It can also be used to poll for success of a pipeline.
+  It can be used to poll for success of a workflow.
+  It can be used to poll for success of a job.
+  It requires JQ to work.
+
+parameters:
+  token:
+    type: string
+    description: PAT to use for authentication.
+  project_slug:
+    type: string
+    description: The project slug. This can be found on the CircleCI project settings page.
+  definition_id:
+    type: string
+    description: Definition ID of the pipeline to run. This can be found on the CircleCI project settings page.
+  branch:
+    type: string
+    default: "main"
+    description: Branch where the pipeline will be run from. Not compatible with tag. Defaults to main.
+  tag:
+    type: string
+    default: ""
+    description: Tag where the pipeline will be run from. Not compatible with branch.
+  parameters:
+    type: string
+    description: List of comma separated key=value parameters.
+    default: ""
+  poll_interval:
+    type: integer
+    default: 0
+    description: Poll interval in seconds. Defaults to 0 (no polling, just trigger, fire and forget).
+  poll_timeout:
+    type: integer
+    default: 0
+    description: Polling timeout in seconds. Defaults to 0 (no timeout). 
+  workflow_name:
+    type: string
+    default: ""
+    description: Workflow name to poll for success. Leave empty to poll all workflows.
+  job_name:
+    type: string
+    default: ""
+    description: Job name to poll for success in WORKFLOW_NAME. Requires workflow_name to be set. Leave empty to poll all jobs in the workflow.
+
+steps:
+  - run:
+      environment:
+        TOKEN: <<parameters.token>>
+        PROJECT_SLUG: <<parameters.project_slug>>
+        DEFINITION_ID: <<parameters.definition_id>>
+        BRANCH: <<parameters.branch>>
+        TAG: <<parameters.tag>>
+        PARAMETERS: <<parameters.parameters>>
+        POLL_INTERVAL: <<parameters.poll_interval>>
+        POLL_TIMEOUT: <<parameters.poll_timeout>>
+        WORKFLOW_NAME: <<parameters.workflow_name>>
+        JOB_NAME: <<parameters.job_name>>
+      name: Trigger pipeline
+      command: <<include(scripts/trigger.sh)>>

@@ -1,15 +1,8 @@
 version: 2.1
 
 description: >
-  Sample orb description
-# What will your orb allow users to accomplish?
-# Descriptions should be short, simple, and informative.
+  Trigger a CircleCI pipeline from within a job in another pipeline. Optionally, poll for success of the triggered pipeline, of a single workflow or a single job.
 
-# This information will be displayed in the orb registry and is not mandatory.
 display:
-  home_url: "https://www.example.com/docs"
+  home_url: "https://github.com/doramatadora/trigger-and-poll-pipeline"
   source_url: "https://github.com/doramatadora/trigger-and-poll-pipeline"
-
-# If your orb requires other orbs, you can import them like this. Otherwise remove the "orbs" stanza.
-# orbs:
-#  hello: circleci/hello-build@0.0.5
