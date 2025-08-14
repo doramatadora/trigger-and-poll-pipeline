@@ -23,7 +23,7 @@ PROJECT_SLUG=$(circleci env subst "${PROJECT_SLUG}")
 # Definition ID of the pipeline to run. This can be found on the CircleCI project settings page.
 DEFINITION_ID=$(circleci env subst "${DEFINITION_ID}")
 
-# Branch where the pipeline will be run from. Not compatible with tag. Defaults to main.
+# Branch where the pipeline will be run from. Not compatible with tag.
 BRANCH=$(circleci env subst "${BRANCH}")
 BRANCH=${BRANCH:-main}
 
@@ -43,7 +43,7 @@ JOB_NAME=$(circleci env subst "${JOB_NAME}")
 POLL_INTERVAL=$(circleci env subst "${POLL_INTERVAL}")
 POLL_INTERVAL=$((POLL_INTERVAL + 0))
 
-# Poll for success for this many seconds. 0 means no timeout. Defaults to 3600 (1 hour).
+# Poll for success for this many seconds. 0 means no timeout.
 POLL_TIMEOUT=$(circleci env subst "${POLL_TIMEOUT}")
 POLL_TIMEOUT=$((POLL_TIMEOUT + 0))
 
