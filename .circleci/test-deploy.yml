@@ -11,6 +11,8 @@ orbs:
 filters: &filters
   tags:
     only: /.*/
+  branches:
+    ignore: test 
 
 # Filter for release tags.
 release-filters: &release-filters
@@ -18,6 +20,15 @@ release-filters: &release-filters
     ignore: /.*/
   tags:
     only: /^v[0-9]+\.[0-9]+\.[0-9]+$/
+
+jobs:
+  run-echo:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - run:
+          name: Echo Done
+          command: echo "Done"
 
 workflows:
   test-deploy:
@@ -31,8 +42,9 @@ workflows:
           branch: test
           token: $CIRCLE_TOKEN
           definition_id: $PIPELINE_DEFINITION_ID
+          workflow_name: test-branch-echo
           context:
-          - trigger-pipeline-orb
+          - trigger-and-poll-pipeline-orb
           - orb-developer
       # The orb must be re-packed for publishing, and saved to the workspace.
       - orb-tools/pack:
@@ -47,3 +59,10 @@ workflows:
             - Trigger with no params
           context: orb-publishing
           filters: *release-filters
+
+  test-branch-echo:
+    jobs:
+      - run-echo:
+          filters:
+            branches:
+              only: test
